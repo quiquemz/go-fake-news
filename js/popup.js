@@ -19,8 +19,8 @@ function getCurrentTabUrl(callback) {
   chrome.tabs.query(queryInfo, function(tabs) {
     // chrome.tabs.query invokes the callback with a list of tabs that match the
     // query. When the popup is opened, there is certainly a window and at least
-    // one tab, so we can safely assume that |tabs| is a non-empty array.
-    // A window can only have one active tab at a time, so the array consists of
+    // one ntab, so we can safely assume that |tabs| is a non-empty array.
+      // A widow can only have one active tab at a time, so the array consists of
     // exactly one tab.
     var tab = tabs[0];
 

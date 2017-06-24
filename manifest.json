@@ -17,8 +17,13 @@
   ],
 
   "content_scripts": [ {
-    "js": [ "jquery.min.js", "background.js" ],
+    "js": [ "js/jquery.min.js", "js/content.js" ],
     "css": ["customStyles.css"],
     "matches": [ "http://*/*", "https://*/*"]
+  }],
+
+  "background": [{
+    "scripts": [ "js/back.js"]
   }]
+
 }
