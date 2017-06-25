@@ -90,16 +90,23 @@
 		<iron-ajax
 				id="ajax"
 				url="http://localhost:5000"
-				params="{{params}}"
 				handle-as="json"
 				on-error="handleError"
-				method="GET"
-				debounce-duration="300">
+				debounce-duration="300"
+				params='{"part":"snippet", "q":"polymer", "key": "YOUTUBE_API_KEY", "type": "video"}'>
 		</iron-ajax>
 
 	</template>
 
 	<script>
+
+		function initOptions() {
+		    return {
+		        url: "http://www.foxnews.com/politics/2017/06/25/sanders-wife-jane-hire-lawyers-amid-fbi-probe-on-loan-application-report.html",
+				id: "3"
+			};
+		}
+
 		Polymer({
 			is: 'my-search-url',
 
@@ -128,9 +135,15 @@
 				credibility: {
 					type: Boolean
 				},
-				params: {
-					type: String
+				options: {
+				    type: Object,
+					value: initOptions(),
+					notify: true
 				}
+			},
+
+			_getParams: function() {
+			    return toReturn;
 			},
 
 			ready: function() {
@@ -140,7 +153,10 @@
 			},
 
 			handleCheck: function () {
-				this.params = "{url:" + this.$.input.value + "}";
+
+			    this.options.url = this.$.input.value;
+			    console.log(this.options.url);
+			    this.$.ajax.setAttribute('params', JSON.stringify(this.options));
 				this.$.ajax.generateRequest();
 			},
 
@@ -162,10 +178,14 @@
 					//4. Set keywords graph
 					//5. click on credibility tab
 
+				console.log(response);
 				this.$.second.style.display = "block";
 				smoothScroll(this.$.second, 400);
-				this.credibility = true;
-				this.data.datasets[0].data = [100, 59, 80, 81, 56];
+
+				this.credibility = response.detail.response.credibility === 1;
+				this.data.datasets[0].data = response.detail.response.emotion;
+				console.log(response.detail.response);
+
 				this.$.credibility.click();
 
 			},
@@ -173,7 +193,7 @@
 			handleError: function(event) {
 				this.$.checkBtn.disabled = false;
 				var error = event.detail.error;
-				alert(error);
+				//alert(error);
 			}
 
 		});
