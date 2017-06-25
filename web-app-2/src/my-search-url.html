@@ -1,0 +1,107 @@
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<dom-module id="my-search-url">
+
+	<template>
+		<style>
+			.container {
+
+			}
+
+			#first.container {
+				height: 356px;
+				padding: 256px 64px 0;
+				background: url("../images/Cosmos-Wallpaper.jpg") center no-repeat;
+				background-size: cover;
+			}
+
+			#second.container {
+				height: 676px;
+				background-color: white;
+			}
+
+			paper-input {
+				--paper-input-container-focus-color: var(--app-primary-color);
+				--paper-input-container-color: var(--app-primary-color);
+				--paper-input-container-input-color: var(--app-primary-color);
+			}
+
+			paper-button {
+				color: white;
+			}
+
+
+		</style>
+
+		<div id="first" class="container">
+			<paper-input label="Enter fake news url">
+				<div slot="suffix">
+					<paper-button on-click="handleCheck">Check</paper-button>
+				</div>
+			</paper-input>
+		</div>
+
+		<div id="second" class="container">
+
+		</div>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'my-search-url',
+
+			properties: {
+				checked: Boolean,
+				value: false
+			},
+
+			handleCheck: function () {
+				//this.$.second.scrollIntoView({block: "start", behavior: "smooth"});
+				smoothScroll(this.$.second, 400);
+			}
+		});
+
+		// Function to animate the scroll
+		var smoothScroll = function (anchor, duration) {
+
+			// Calculate how far and how fast to scroll
+			var startLocation = window.pageYOffset;
+			var endLocation = anchor.offsetTop;
+			var distance = endLocation - startLocation;
+			var increments = distance/(duration/16);
+			var stopAnimation;
+
+			// Scroll the page by an increment, and check if it's time to stop
+			var animateScroll = function () {
+				window.scrollBy(0, increments);
+				stopAnimation();
+			};
+
+			// If scrolling down
+			if ( increments >= 0 ) {
+				// Stop animation when you reach the anchor OR the bottom of the page
+				stopAnimation = function () {
+					var travelled = window.pageYOffset;
+					if ( (travelled >= (endLocation - increments)) || ((window.innerHeight + travelled) >= document.body.offsetHeight) ) {
+						clearInterval(runAnimation);
+					}
+				};
+			}
+			// If scrolling up
+			else {
+				// Stop animation when you reach the anchor OR the top of the page
+				stopAnimation = function () {
+					var travelled = window.pageYOffset;
+					if ( travelled <= (endLocation || 0) ) {
+						clearInterval(runAnimation);
+					}
+				};
+			}
+
+			// Loop the animation function
+			var runAnimation = setInterval(animateScroll, 16);
+
+		};
+	</script>
+</dom-module>
