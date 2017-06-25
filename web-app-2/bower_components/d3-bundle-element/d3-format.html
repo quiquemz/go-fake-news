@@ -1,0 +1,25 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="d3-format-behavior.html">
+
+<!--
+to compute a d3.format function
+-->
+
+<dom-module id="d3-format">
+	<template>
+		<style>
+			:host {
+				display: block;	
+			}
+		</style>
+		
+	</template>
+	<script>
+		Polymer({
+			is: 'd3-format',
+			behaviors: [
+				Polymer.behaviors.d3Format
+			]
+		});
+	</script>
+</dom-module>

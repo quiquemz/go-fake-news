@@ -1,0 +1,38 @@
+{
+  "name": "d3-radar-chart",
+  "version": "0.8.1",
+  "authors": [
+    "christophe.geiser <christophe.geiser@e-smile.org>"
+  ],
+  "description": "Reusable d3-radar-chart",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "d3.js",
+    "charts",
+    "chart",
+    "radar",
+    "polymer",
+    "analytics",
+    "mapping",
+    "dataviz"
+  ],
+  "main": "d3-radar-chart.html",
+  "license": "MIT",
+  "repository": "https://github.com/polymerEl/multi-chart",
+  "ignore": [
+    "/test/",
+    "/demo/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.4.0",
+    "d3-bundle-element": "PolymerEl/d3-bundle-element"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  }
+}

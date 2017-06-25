@@ -1,5 +1,10 @@
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/chart-elements/chart-radar.html">
+<link rel="import" href="my-cred-dash.html">
 
 <dom-module id="my-search-url">
 
@@ -17,32 +22,65 @@
 			}
 
 			#second.container {
+				display: none;
 				height: 676px;
 				background-color: white;
+				margin: auto auto;
+				text-align: center;
+			}
+
+			#radarChart {
+				width: 500px;
+				height: 500px;
 			}
 
 			paper-input {
-				--paper-input-container-focus-color: var(--app-primary-color);
+				--paper-input-container-focus-color: #CCC;
 				--paper-input-container-color: var(--app-primary-color);
 				--paper-input-container-input-color: var(--app-primary-color);
+				--paper-input-container-input: {
+					font-size: 24px;
+				};
 			}
 
 			paper-button {
 				color: white;
 			}
 
+			paper-tabs {
+				--paper-tabs-selection-bar-color: var(--app-accent-color-on-light);
+				--paper-tabs-selection-bar: var(--app-accent-color-on-light);
+				--paper-tab-ink: var(--app-accent-color-on-light);
+				margin-bottom: 40px;
+			}
+
+			paper-tab {
+
+			}
 
 		</style>
 
 		<div id="first" class="container">
 			<paper-input label="Enter fake news url">
 				<div slot="suffix">
-					<paper-button on-click="handleCheck">Check</paper-button>
+					<paper-button on-tap="handleCheck">Check</paper-button>
 				</div>
 			</paper-input>
 		</div>
 
 		<div id="second" class="container">
+			<paper-tabs selected="{{selected}}">
+				<paper-tab id="credibility">Credibility</paper-tab>
+				<paper-tab>Emotion</paper-tab>
+				<paper-tab>Keywords</paper-tab>
+			</paper-tabs>
+
+			<iron-pages selected="{{selected}}">
+				<my-cred-dash></my-cred-dash>
+				<chart-radar id="radarChart" data="[[data]]"></chart-radar>
+				<div>Zot</div>
+			</iron-pages>
+
 
 		</div>
 	</template>
@@ -52,13 +90,50 @@
 			is: 'my-search-url',
 
 			properties: {
-				checked: Boolean,
-				value: false
+				checked: {
+					type: Boolean,
+					value: false
+				},
+				dataOption: {
+					type: String,
+					value: "Credibility"
+				},
+				data: {
+					type: Object,
+					value: {
+						labels: ["Anger", "Sadness", "Disgust", "Fear", "Joy"],
+						datasets: [{
+							label: "Emotions",
+							backgroundColor: "rgba(40, 0, 255, 0.3)",
+							borderColor: "rgba(40,0,255,1)",
+							borderWidth: 1,
+							pointBackgroundColor: "rgba(40, 0, 255, 0.7)",
+							pointBorderColor: "#fff",
+							pointHoverBackgroundColor: "#fff",
+							pointHoverBorderColor: "rgba(40, 0, 255, 1)",
+							data: [50, 50, 50, 50, 50]
+						}]
+					}
+				}
 			},
 
 			handleCheck: function () {
-				//this.$.second.scrollIntoView({block: "start", behavior: "smooth"});
+
+				//handle request
+				//handle response
+					//0. change second-container display
+					//1. scroll down
+					//2. setTimeout
+					//3. Set credibility page
+					//4. update data.datasets[0].data
+					//5. Set keywords graph
+					//6. click on credibility tab
+
+				this.$.second.style.display = "block";
 				smoothScroll(this.$.second, 400);
+				this.data.datasets[0].data = [100, 59, 80, 81, 56];
+				this.$.radarChart.style.width = "499px";
+				this.$.credibility.click();
 			}
 		});
 
@@ -103,5 +178,7 @@
 			var runAnimation = setInterval(animateScroll, 16);
 
 		};
+
+
 	</script>
 </dom-module>

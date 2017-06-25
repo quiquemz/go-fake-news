@@ -1,0 +1,39 @@
+<script>
+/**
+
+  `Polymer.behaviors.svgFocus` makes svg focusable  
+
+**/
+window.Polymer = window.Polymer || {};
+Polymer.behaviors = Polymer.behaviors || {};
+
+/* @polymerBehavior Polymer.behaviors.d3Format */
+Polymer.behaviors.svgFocusable = {
+
+  properties: {
+    /**
+     * `tabindex` adds a tabinex to the svg element to make it focusable (svg is not focusable by default)
+     */
+    tabindex: {
+      type: String,
+      value: '',
+      observer: '_tabIndexChange'
+    }
+
+  },
+
+  ready: function() {
+    if (!this.$.svg) {
+      console.error('an svg element has to be defined for this behavior');
+    }
+  },
+
+  _tabIndexChange: function(tabindex) {
+    if (tabindex) {
+      return this.$.svg.setAttribute('tabindex', tabindex);
+    }
+    this.$.svg.removeAttribute('tabindex');
+
+  }
+};
+</script>

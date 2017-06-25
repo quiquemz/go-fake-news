@@ -1,0 +1,63 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="my-cred-dash">
+
+	<template>
+		<style>
+			.card {
+				margin: 54px;
+				padding: 54px 0 0;
+				color: #757575;
+				border-radius: 5px;
+				background-color: #E53D3D;
+				box-shadow: 0 0 20px rgba(0, 0, 0, 0.2)
+			}
+
+			.circle {
+				display: inline-block;
+				width: 64px;
+				height: 64px;
+				text-align: center;
+				color: #E53D3D;
+				border-radius: 50%;
+				background: white;
+				font-size: 30px;
+				line-height: 64px;
+			}
+
+			.inner-card {
+				height: 312px;
+				background-color: white;
+				margin-top: 54px;
+			}
+
+		</style>
+
+			<div class="card">
+				<div class="circle">X</div>
+				<div class="inner-card">
+					Ooops! It seems lilke this news site is not reliable.
+					Try one of these for similar information:
+					<list>
+						<li>
+
+							<a href="">
+
+							</a>
+						</li>
+						<li>
+							<a href="">
+
+							</a>
+						</li>
+					</list>
+				</div>
+			</div>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'my-cred-dash'
+		});
+	</script>
+</dom-module>

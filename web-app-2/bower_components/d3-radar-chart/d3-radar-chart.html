@@ -1,0 +1,701 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<!-- <link rel="import" href="../d3-bundle-element/d3-bundle-element.html"> -->
+<link rel="import" href="../d3-bundle-element/d3-element-multi.html">
+<link rel="import" href="../d3-bundle-element/svg-focusable-behavior.html">
+<link rel="import" href="../d3-bundle-element/svg-viewbox-behavior.html">
+<!--
+An element displaying a radar-chart.
+
+Example:
+
+    <d3-radar-chart></d3-radar-chart>
+
+@demo 
+-->
+<dom-module id="d3-radar-chart">
+  <style>
+  :host {
+    display: block;
+  }
+  
+  ::content .radar-chart .level {
+    stroke: grey;
+    stroke-width: 0.5;
+  }
+  
+  ::content .radar-chart .axis line {
+    stroke: grey;
+    stroke-width: 1;
+  }
+  
+  ::content .radar-chart .axis line[filter] {
+    /*stroke: grey;*/
+    stroke-width: var(--line-filter-width, 2);
+  }
+  
+  ::content .radar-chart .axis .legend {
+    /*    font-family: sans-serif;
+    font-size: 10px;*/
+    fill: var(--th-text, darkgrey);
+  }
+  
+  ::content .radar-chart .axis .legend.top {
+    dy: 1em;
+  }
+  
+  ::content .radar-chart .axis .legend.left {
+    text-anchor: start;
+  }
+  
+  ::content .radar-chart .axis .legend.middle {
+    text-anchor: middle;
+  }
+  
+  ::content .radar-chart .axis .legend.right {
+    text-anchor: end;
+  }
+  
+  ::content .radar-chart .tooltip {
+    font-family: sans-serif;
+    font-size: 13px;
+    transition: opacity 200ms;
+    opacity: 0;
+  }
+  
+  ::content .radar-chart .tooltip.visible {
+    opacity: 1;
+  }
+  /* area transition when hovering */
+  
+  ::content .radar-chart .area {
+    stroke-width: 2;
+    fill-opacity: 0.5;
+  }
+  
+  ::content .radar-chart.focus .area {
+    fill-opacity: 0.1;
+  }
+  
+  ::content .radar-chart.focus .area.focused {
+    fill-opacity: 0.7;
+  }
+  
+  ::content .radar-chart .circle {
+    fill-opacity: 0.9;
+    fill: white;
+    stroke-width: 3px;
+  }
+  
+  ::content .radar-chart .circle.active {
+    /*fill-opacity: 0.3;*/
+    fill: var(--accent-color);
+    /*stroke-width: 3px;*/
+  }
+  
+  ::content .radar-chart .circle {
+    fill-opacity: 0.9;
+    fill: white;
+    /*stroke-width: 3px;*/
+  }
+  /* transitions */
+  
+  ::content .radar-chart .area,
+  ::content .radar-chart .circle {
+    transition: opacity 300ms, fill-opacity 200ms;
+    opacity: 1;
+  }
+  
+  ::content .radar-chart .d3-enter,
+  ::content .radar-chart .d3-exit {
+    opacity: 0;
+  }
+  </style>
+  <template>
+    <svg id="svg" height="100%" width="100%" min-height="100%">
+      <defs>
+        <g id="colorMask">
+        </g>
+        <filter id="colorline" x="0" y="0" width="100%" height="100%" filterUnits="userSpaceOnUse">
+          <feImage xlink:href="#colorMask" result="mask1" />
+          <feComposite in2="SourceGraphic" in="mask1" operator="in" />
+        </filter>
+      </defs>
+      <g id="radarContainer">
+      </g>
+    </svg>
+  </template>
+</dom-module>
+<script>
+(function() {
+  'user-strict';
+  var RadarChart = {
+    defaultConfig: {
+      containerClass: 'radar-chart',
+      w: 600,
+      h: 600,
+      factor: 0.95,
+      factorLegend: 1,
+      axisValues: false,
+      axisColors: d3.scaleOrdinal().range(['green', 'orange', 'red']),
+      levels: 3,
+      levelTick: false,
+      TickLength: 10,
+      maxValue: 0,
+      minValue: 0,
+      radians: 2 * Math.PI,
+      color: d3.scaleOrdinal(d3.schemeCategory10),
+      axisLine: true,
+      axisText: true,
+      circles: true,
+      radius: 12,
+      backgroundTooltipColor: '#555',
+      backgroundTooltipOpacity: '0.7',
+      tooltipColor: 'white',
+      axisLabel: function(d, i) {
+        return d.axis;
+      },
+      axisJoin: function(d, i) {
+        return d.className || i;
+      },
+      tooltipFormatValue: function(d) {
+        return d;
+      },
+      tooltipFormatClass: function(d) {
+        return d;
+      },
+      transitionDuration: 300
+    },
+    chart: function() {
+      // default config
+      var cfg = Object.create(RadarChart.defaultConfig);
+
+      function setTooltip(tooltip, msg) {
+        if (msg === false || msg === undefined) {
+          tooltip.classed('visible', 0);
+          tooltip.select('rect').classed('visible', 0);
+        } else {
+          tooltip.classed('visible', 1);
+
+          var container = tooltip.node().parentNode;
+          var coords = d3.mouse(container);
+
+          tooltip.select('text').classed('visible', 1).style('fill', cfg.tooltipColor);
+          var padding = 5;
+          var bbox = tooltip.select('text').text(msg).node().getBBox();
+
+          tooltip.select('rect')
+            .classed('visible', 1).attr('x', 0)
+            .attr('x', bbox.x - padding)
+            .attr('y', bbox.y - padding)
+            .attr('width', bbox.width + (padding * 2))
+            .attr('height', bbox.height + (padding * 2))
+            .attr('rx', '5').attr('ry', '5')
+            .style('fill', cfg.backgroundTooltipColor).style('opacity', cfg.backgroundTooltipOpacity);
+          tooltip.attr('transform', 'translate(' + (coords[0] + 10) + ',' + (coords[1] - 10) + ')');
+        }
+      }
+
+      function radar(selection) {
+        selection.each(function(data) {
+          if(!data) {
+            return;
+          }
+          var container = d3.select(this).select('#radarContainer');
+          // var defs = container.selectAll('defs').data([data[0]]).enter().append('defs');
+          var colorMask = d3.select(this).select('#colorMask');
+
+          // allow simple notation
+          data = data.map(function(datum) {
+            if (datum instanceof Array) {
+              datum = {
+                axes: datum
+              };
+            }
+            return datum;
+          });
+
+          var maxValue = Math.max(cfg.maxValue, d3.max(data, function(d) {
+            return d3.max(d.axes, function(o) {
+              return o.value;
+            });
+          }));
+          maxValue -= cfg.minValue;
+
+          var allAxis = data[0].axes.map(function(i, j) {
+            return {
+              key: i.axis,
+              name: cfg.axisLabel(i),
+              xOffset: (i.xOffset) ? i.xOffset : 0,
+              yOffset: (i.yOffset) ? i.yOffset : 0
+            };
+          });
+          var total = allAxis.length;
+          var radius = cfg.factor * Math.min(cfg.w / 2, cfg.h / 2);
+          var radius2 = Math.min(cfg.w / 2, cfg.h / 2);
+
+          container.classed(cfg.containerClass, 1);
+
+          function getPosition(i, range, factor, func) {
+            factor = typeof factor !== 'undefined' ? factor : 1;
+            return range * (1 - factor * func(i * cfg.radians / total));
+          }
+
+          function getHorizontalPosition(i, range, factor) {
+            return getPosition(i, range, factor, Math.sin);
+          }
+
+          function getVerticalPosition(i, range, factor) {
+            return getPosition(i, range, factor, Math.cos);
+          }
+
+          // build axis color filter if need be
+          var axisValues;
+          if (cfg.axisValues && cfg.axisValues.length) {
+            axisValues = cfg.axisValues;
+            if (axisValues[0] < axisValues[axisValues.length - 1]) {
+              axisValues = axisValues.reverse();
+            }
+
+            var colorCircles = colorMask.selectAll('circle.axis-colors').data(axisValues);
+
+            colorCircles.enter().append('circle')
+              .classed('axis-colors', 1)
+              .attrs({
+                fill: function(d, i) {
+                  return cfg.axisColors(i);
+                },
+                r: function(d, i) {
+                  return radius * d;
+                },
+                cx: cfg.w / 2,
+                cy: cfg.h / 2
+              });
+
+          }
+
+          // levels && axises
+          var levelFactors = d3.range(0, cfg.levels).map(function(level) {
+            return radius * ((level + 1) / cfg.levels);
+          });
+
+          var levelGroups = container.selectAll('g.level-group').data(levelFactors);
+
+          levelGroups.exit().remove();
+          
+          levelGroups = levelGroups.enter().append('g');
+
+          levelGroups.attr('class', function(d, i) {
+            return 'level-group level-group-' + i;
+          });
+
+          var levelLine = levelGroups.selectAll('.level').data(function(levelFactor) {
+            return d3.range(0, total).map(function() {
+              return levelFactor;
+            });
+          });
+
+          levelLine.exit().remove();
+          levelLine = levelLine.enter().append('line');
+
+          if (cfg.levelTick) {
+            levelLine
+              .attr('class', 'level')
+              .attr('x1', function(levelFactor, i) {
+                if (radius == levelFactor) {
+                  return getHorizontalPosition(i, levelFactor);
+                } else {
+                  return getHorizontalPosition(i, levelFactor) + (cfg.TickLength / 2) * Math.cos(i * cfg.radians / total);
+                }
+              })
+              .attr('y1', function(levelFactor, i) {
+                if (radius == levelFactor) {
+                  return getVerticalPosition(i, levelFactor);
+                } else {
+                  return getVerticalPosition(i, levelFactor) - (cfg.TickLength / 2) * Math.sin(i * cfg.radians / total);
+                }
+              })
+              .attr('x2', function(levelFactor, i) {
+                if (radius == levelFactor) {
+                  return getHorizontalPosition(i + 1, levelFactor);
+                } else {
+                  return getHorizontalPosition(i, levelFactor) - (cfg.TickLength / 2) * Math.cos(i * cfg.radians / total);
+                }
+              })
+              .attr('y2', function(levelFactor, i) {
+                if (radius == levelFactor) {
+                  return getVerticalPosition(i + 1, levelFactor);
+                } else {
+                  return getVerticalPosition(i, levelFactor) + (cfg.TickLength / 2) * Math.sin(i * cfg.radians / total);
+                }
+              })
+              .attr('transform', function(levelFactor) {
+                return 'translate(' + (cfg.w / 2 - levelFactor) + ', ' + (cfg.h / 2 - levelFactor) + ')';
+              });
+          } else {
+            levelLine
+              .attr('class', 'level')
+              .attr('x1', function(levelFactor, i) {
+                return getHorizontalPosition(i, levelFactor);
+              })
+              .attr('y1', function(levelFactor, i) {
+                return getVerticalPosition(i, levelFactor);
+              })
+              .attr('x2', function(levelFactor, i) {
+                return getHorizontalPosition(i + 1, levelFactor);
+              })
+              .attr('y2', function(levelFactor, i) {
+                return getVerticalPosition(i + 1, levelFactor);
+              })
+              .attr('transform', function(levelFactor) {
+                return 'translate(' + (cfg.w / 2 - levelFactor) + ', ' + (cfg.h / 2 - levelFactor) + ')';
+              });
+          }
+          if (cfg.axisLine || cfg.axisText) {
+            var axis = container.selectAll('.axis').data(allAxis);
+
+            axis.exit().remove();
+
+            axis = axis.enter().append('g');
+            if (cfg.axisLine) {
+              axis.append('line');
+            }
+            if (cfg.axisText) {
+              axis.append('text');
+            }
+
+
+            axis.attr('class', function(d) {
+              // console.info('AXIS', d);
+              return 'axis ' + d.key;
+            });
+
+            if (cfg.axisLine) {
+              var axisLine = axis.select('line')
+                .attr('x1', cfg.w / 2)
+                .attr('y1', cfg.h / 2)
+                .attr('x2', function(d, i) {
+                  return (cfg.w / 2 - radius2) + getHorizontalPosition(i, radius2, cfg.factor);
+                })
+                .attr('y2', function(d, i) {
+                  return (cfg.h / 2 - radius2) + getVerticalPosition(i, radius2, cfg.factor);
+                });
+              if (cfg.axisValues && cfg.axisValues.length) {
+                axisLine
+                  .attr('filter', 'url(#colorline)');
+              }
+            }
+
+            if (cfg.axisText) {
+              axis.select('text')
+                .attr('class', function(d, i) {
+                  var p = getHorizontalPosition(i, 0.5);
+
+                  return 'legend ' +
+                    ((p < 0.4) ? 'left' : ((p > 0.6) ? 'right' : 'middle'));
+                })
+                .attr('dy', function(d, i) {
+                  var p = getVerticalPosition(i, 0.5);
+                  return ((p < 0.1) ? '1em' : ((p > 0.9) ? '0' : '0.5em'));
+                })
+                .text(function(d) {
+                  return d.name;
+                })
+                .attr('x', function(d, i) {
+                  return d.xOffset + (cfg.w / 2 - radius2) + getHorizontalPosition(i, radius2, cfg.factorLegend);
+                })
+                .attr('y', function(d, i) {
+                  return d.yOffset + (cfg.h / 2 - radius2) + getVerticalPosition(i, radius2, cfg.factorLegend);
+                });
+            }
+          }
+
+          // content
+          data.forEach(function(d) {
+            d.axes.forEach(function(axis, i) {
+              axis.x = (cfg.w / 2 - radius2) + getHorizontalPosition(i, radius2, (parseFloat(Math.max(axis.value - cfg.minValue, 0)) / maxValue) * cfg.factor);
+              axis.y = (cfg.h / 2 - radius2) + getVerticalPosition(i, radius2, (parseFloat(Math.max(axis.value - cfg.minValue, 0)) / maxValue) * cfg.factor);
+            });
+          });
+
+          // var circle = svg.selectAll("circle").data(data) // UPDATE
+          //   .style("fill", "blue");
+
+          // circle.exit().remove(); // EXIT
+
+          // circle.enter().append("circle") // ENTER
+          //   .style("fill", "green")
+          //   .merge(circle) // ENTER + UPDATE
+          //   .style("stroke", "black");
+
+          var polygon = container.selectAll('.area').data(data, cfg.axisJoin);
+
+          polygon.exit()
+            .classed('d3-exit', 1) // trigger css transition
+            .transition().duration(cfg.transitionDuration)
+            .remove();
+
+          polygon = polygon.enter().append('polygon')
+            .classed('d3-enter', 1)
+            .classed('area', 1)
+            .merge(polygon)
+            .on('mouseover', function(dd) {
+              d3.event.stopPropagation();
+              container.classed('focus', 1);
+              d3.select(this).classed('focused', 1);
+              setTooltip(tooltip, cfg.tooltipFormatClass(dd.className));
+            })
+            .on('mouseout', function() {
+              d3.event.stopPropagation();
+              container.classed('focus', 0);
+              d3.select(this).classed('focused', 0);
+              setTooltip(tooltip, false);
+            });
+
+
+          polygon
+            .classed('d3-exit', 0)
+            .each(function(d, i) {
+              var sel = d3.select(this).classed('radar-chart-serie' + i, 1);
+              if (d.className) {
+                sel.classed(d.className, 1);
+              }
+            })
+            // styles should only be transitioned with css
+            .style('stroke', function(d, i) {
+              return cfg.color(i);
+            })
+            .style('fill', function(d, i) {
+              return cfg.color(i);
+            })
+            .transition().duration(cfg.transitionDuration)
+            // svg attrs with js
+            .attr('points', function(d) {
+              return d.axes.map(function(p) {
+                return [p.x, p.y].join(',');
+              }).join(' ');
+            })
+            .on('start', function() {
+              d3.select(this).classed('d3-enter', 0); // trigger css transition
+            });
+
+          if (cfg.circles && cfg.radius) {
+
+            var circleGroups = container.selectAll('g.circle-group').data(data, cfg.axisJoin);
+
+            circleGroups.exit()
+              .classed('d3-exit', 1) // trigger css transition
+              .transition().duration(cfg.transitionDuration).remove();
+
+            circleGroups = circleGroups.enter()
+              .append('g')
+              // .filter(function(d){return d.circles !== false;})
+              .classed('circle-group', 1)
+              .classed('d3-enter', 1);
+            
+
+            circleGroups
+              .each(function(d) {
+                // var classed = {
+                //   'd3-exit': 0
+                // }; // if exiting element is being reused
+                var sel = d3.select(this).classed('d3-exit', 0);
+                if (d.className) {
+                  sel.classed(d.className, 1);
+                }
+              })
+              .transition().duration(cfg.transitionDuration)
+              .on('start', function() {
+                d3.select(this).classed('d3-enter', 0); // trigger css transition
+              });
+
+            var circle = circleGroups
+              // .filter(function(d) {
+              //   return d.circles !== false;
+              // })
+              .selectAll('.circle').data(function(datum, i) {
+                var radius = datum.circles === false ? 0 : cfg.radius;
+                return datum.axes.map(function(d) {
+                  return [d, i, radius];
+                });
+              });
+
+            circle.exit()
+              .classed('d3-exit', 1) // trigger css transition
+              .transition().duration(cfg.transitionDuration).remove();
+
+            circle = circle.enter().append('circle')
+              .classed('d3-enter', 1)
+              .classed('circle', 1)
+              .merge(circle)
+              .on('mouseover', function(dd) {
+                d3.event.stopPropagation();
+                setTooltip(tooltip, cfg.tooltipFormatValue(dd[0].value));
+                Polymer.Base.fire('radar-over', dd, {
+                  node: this
+                });
+                //container.classed('focus', 1);
+                //container.select('.area.radar-chart-serie'+dd[1]).classed('focused', 1);
+              })
+              .on('mouseout', function(dd) {
+                d3.event.stopPropagation();
+                setTooltip(tooltip, false);
+                container.classed('focus', 0);
+
+                //container.select('.area.radar-chart-serie'+dd[1]).classed('focused', 0);
+                //No idea why previous line breaks tooltip hovering area after hoverin point.
+              });
+
+
+            circle
+              .classed('d3-exit', 0)
+              .each(function(d) {
+                d3.select(this)
+                  .classed('radar-chart-serie' + d[1], 1)
+                  .classed('radar-axis-' + d[0].axis, 1);
+              })
+              // styles should only be transitioned with css
+              .attr('stroke', function(d) {
+                return cfg.color(d[1]);
+              })
+              .transition().duration(cfg.transitionDuration)
+              // svg attrs with js
+              .attr('r', function(d){return d[2]})
+              .attr('cx', function(d) {
+                return d[0].x;
+              })
+              .attr('cy', function(d) {
+                return d[0].y;
+              })
+              .on('start', function() {
+                d3.select(this).classed('d3-enter', 0); // trigger css transition
+              });
+    
+          var tooltip = container.selectAll('g.tooltip').data([data[0]]);
+          tooltip = tooltip.enter()
+            .merge(tooltip)
+            .append('g')
+            .classed('tooltip', true);
+
+          tooltip.append('rect').classed('tooltip', true);
+          tooltip.append('text').classed('tooltip', true);
+
+          }
+        });
+      }
+
+      radar.config = function(value) {
+        if (!arguments.length) {
+          return cfg;
+        }
+        if (arguments.length > 1) {
+          cfg[arguments[0]] = arguments[1];
+        } else {
+          d3.entries(value || {}).forEach(function(option) {
+            cfg[option.key] = option.value;
+          });
+        }
+        return radar;
+      };
+
+      return radar;
+    }
+
+  };
+
+  Polymer({
+
+    is: 'd3-radar-chart',
+
+    properties: {
+      /* 
+       * `data` data to display on the chart 
+       */
+      data: {
+        type: Array
+        // value: function() {
+        //   return [];
+        // }
+      },
+
+      /* 
+       * `options` chart options  
+       */
+      options: {
+        type: Object,
+        notify: true,
+        value: {
+          containerClass: 'radar-chart',
+          w: 600,
+          h: 600,
+          // axisValues: [0.3, 0.7, 1],
+          factor: 0.95,
+          factorLegend: 1,
+          levels: 3,
+          levelTick: true,
+          TickLength: 10,
+          maxValue: 100,
+          minValue: 0,
+          radians: 2 * Math.PI,
+          color: d3.scaleOrdinal(d3.schemeCategory10),
+          axisLine: true,
+          axisText: true,
+          circles: true,
+          radius: 12,
+          backgroundTooltipColor: '#555',
+          backgroundTooltipOpacity: '0.7',
+          tooltipColor: 'white',
+          axisJoin: function(d, i) {
+            return d.className || i;
+          },
+          tooltipFormatValue: function(d) {
+            return d;
+          },
+          tooltipFormatClass: function(d) {
+            return d;
+          },
+          transitionDuration: 300
+        }
+      },
+
+      selected: {
+        type: String,
+        notify: true
+      }
+    },
+    
+    observers: [
+      'draw(data.*, options)'
+    ],
+     
+    behaviors: [
+      Polymer.behaviors.svgViewBox,
+      Polymer.behaviors.svgFocusable
+    ],
+    
+    draw: function(d, options) {
+      
+      var chart = RadarChart.chart().config(options);
+      var cfg = chart.config();
+
+      this.set('_viewBox', '0 0 ' + cfg.w + ' ' + cfg.h);
+
+      var d3Svg = d3.select(this.$.svg);
+
+      d3Svg.selectAll('#radarContainer > *, #colorMask > *').remove();
+      d3Svg
+        .datum(this.data)
+        .call(chart);
+    }
+
+  });
+})();
+</script>
