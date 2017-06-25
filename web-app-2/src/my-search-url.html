@@ -79,7 +79,9 @@
 			<iron-pages selected="{{selected}}">
 				<my-cred-dash credibility="[[credibility]]"></my-cred-dash>
 				<chart-radar id="radarChart" data="[[data]]"></chart-radar>
-				<div>Zot</div>
+				<div style="margin: 50px; text-align: center">
+					<h1 style="font-weight: 300">Feature under construction...</h1>
+				</div>
 			</iron-pages>
 
 
@@ -140,7 +142,9 @@
 			handleCheck: function () {
 				console.log(this.params);
 				this.params = "{url:" + this.$.input.value + "}";
+				console.log(this.params);
 				this.$.ajax.generateRequest();
+				this.handleResponseReceived();
 			},
 
 			handleRequestSent: function () {
