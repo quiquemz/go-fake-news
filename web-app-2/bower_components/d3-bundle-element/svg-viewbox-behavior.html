@@ -1,0 +1,36 @@
+<script>
+/**
+
+  `Polymer.behaviors.svgViewBox` makes allows proper binding with svg viewBox attribute  
+
+**/
+window.Polymer = window.Polymer || {};
+Polymer.behaviors = Polymer.behaviors || {};
+
+/* @polymerBehavior Polymer.behaviors.d3Format */
+Polymer.behaviors.svgViewBox = {
+
+  properties: {
+
+    /**
+     * `viewBox` for svg 
+     */
+    _viewBox: {
+      type: String,
+      value: '0 0 400 400',
+      observer: '_viewBoxChanged'
+    }
+  },
+
+  ready: function() {
+    if (!this.$.svg) {
+      console.error('an svg element has to be defined for this behavior');
+    }
+  },
+
+  _viewBoxChanged: function(viewBox) {
+    this.$.svg.setAttribute('viewBox', viewBox); // we have problems to bind to viewBox because of the upper case 'B'
+  }
+
+};
+</script>

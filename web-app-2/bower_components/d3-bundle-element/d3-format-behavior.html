@@ -1,0 +1,43 @@
+<script>
+/**
+
+	`Polymer.behaviors.d3Format` formating utility based on d3.format  
+
+**/
+window.Polymer = window.Polymer || {};
+Polymer.behaviors = Polymer.behaviors || {};
+
+/* @polymerBehavior Polymer.behaviors.d3Format */
+Polymer.behaviors.d3Format = {
+  properties: {
+
+    /**
+     * `format` d3.format as per https://github.com/d3/d3-format/blob/master/README.md
+     */
+    d3Format: {
+      type: Function,
+      notify: true,
+      computed: '__computeFormat(specifyer, isTimeFormat)'
+    },
+
+    isTimeFormat: {
+      type: Boolean,
+      value: false
+    },
+
+    /**
+     * `specifyer` for the format function
+     */
+    specifyer: {
+      type: String,
+      value: '.1f'
+    }
+
+  },
+
+  __computeFormat: function(specifyer, isTime) {
+    return isTime ? d3.timeFormat(specifyer) : d3.format(specifyer);
+  },
+
+};
+</script>

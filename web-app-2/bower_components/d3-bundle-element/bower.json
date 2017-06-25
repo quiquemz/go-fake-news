@@ -1,0 +1,34 @@
+{
+  "name": "d3-bundle-element",
+  "version": "1.6.0",
+  "authors": [
+    "christophe-g <christophe.geiser@gmail.com>"
+  ],
+  "description": "polymer element for importing d3.js (v4) as optimized bundle",
+  "homepage": "https://github.com/PolymerEl/d3-bundle-element",
+  "dependencies": {
+    "d3": "4.x",
+    "d3-svg-legend": "https://github.com/susielu/d3-legend.git#master",
+    "d3-tip": "https://github.com/cgav/d3-tip.git#master",
+    "topojson": "^3.x"
+  },
+  "main": "d3-bundle-element.html",
+  "moduleType": [],
+  "keywords": [
+    "d3.js",
+    "polymer",
+    "SVG",
+    "webcomponent",
+    "webcomponents",
+    "d3js"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
