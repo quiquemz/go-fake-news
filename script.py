@@ -16,6 +16,7 @@ from sklearn.externals import joblib
 import re
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
+nltk.download('stopwords')
 
 def clean_content ( raw_article ):
     # Function to convert a raw article to a string of words
@@ -25,7 +26,7 @@ def clean_content ( raw_article ):
     # 1. Remove HTML
     article_text = BeautifulSoup(raw_article, "lxml").get_text() 
     #
-    # 2. Remove non-letters        
+    # 2. Remove non-letters        kuuu
     letters_only = re.sub("[^a-zA-Z]", " ", article_text) 
     #
     # 3. Convert to lower case, split into individual words

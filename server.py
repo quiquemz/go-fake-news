@@ -1,7 +1,7 @@
 from flask import Flask, url_for
 from flask import request
 from flask import Response
-
+import WatsonAPI
 import json
 from flask import jsonify
 # import script.py
@@ -21,11 +21,8 @@ def api_hello():
 def api_root():
     if 'url' in request.args:
         # return 'Hello ' + request.args['url']
-
-        data = {
-            'hello': 'world',
-            'number': 3
-        }
+        print(request.args['url'])
+        data = WatsonAPI.emotion_analysis(request.args['url'])
         resp = jsonify(data)
         resp.headers.add("Access-Control-Allow-Origin", "*")
         resp.status_code = 200

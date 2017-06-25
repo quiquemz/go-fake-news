@@ -1,3 +1,6 @@
+# Deprecated not needed
+
+
 import pandas as pd
 import json
 from watson_developer_cloud import NaturalLanguageUnderstandingV1
