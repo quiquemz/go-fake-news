@@ -18,7 +18,7 @@ data = {'emotion': {'document': {'emotion': {'anger': 0.106514, 'joy': 0.624548,
 
 
 # jdata = json.load(data)
-# pprint(data)
+print(data)
 print("newLine")
 print("newLine")
 print("newLine")
@@ -38,11 +38,12 @@ def get_enities():
     i = 0
     stringToAddToCSV = ""
     while i < numberOfEntities:
-        stringToAddToCSV = data['entities'][numberOfEntities]['text']
+        print(i)
+        stringToAddToCSV = "%s %s" % (stringToAddToCSV, data['entities'][i]['text'])
         i += 1
     return stringToAddToCSV
 
 
-pprint(get_enities())
+# pprint(get_enities())
 # print(get_emotion('anger'))
 # print(get_sentiment())
