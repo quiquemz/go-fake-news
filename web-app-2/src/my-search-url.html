@@ -178,11 +178,12 @@
 					//4. Set keywords graph
 					//5. click on credibility tab
 
+				console.log(response);
 				this.$.second.style.display = "block";
 				smoothScroll(this.$.second, 400);
 
-				this.credibility = true;
-				this.data.datasets[0].data = response.detail.response;
+				this.credibility = response.detail.response.credibility === 1;
+				this.data.datasets[0].data = response.detail.response.emotion;
 				console.log(response.detail.response);
 
 				this.$.credibility.click();

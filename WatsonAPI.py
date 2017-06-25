@@ -27,8 +27,8 @@ import watson_developer_cloud.natural_language_understanding.features.v1 as \
 
 natural_language_understanding = NaturalLanguageUnderstandingV1(
     version='2017-02-27',
-    username='4466e42c-ace7-483d-af17-31d80246f9b1',
-    password='BYoIDLNYeCQG')
+    username='61cfbf14-fc7c-4f06-b397-d5da51768b92',
+    password='Za0cTk6qDDLZ')
 
 # df = pd.read_csv('emergent.csv', sep=',', header=0)
 # dicts = df.to_dict()
