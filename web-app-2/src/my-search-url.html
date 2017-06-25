@@ -140,11 +140,8 @@
 			},
 
 			handleCheck: function () {
-				console.log(this.params);
 				this.params = "{url:" + this.$.input.value + "}";
-				console.log(this.params);
 				this.$.ajax.generateRequest();
-				this.handleResponseReceived();
 			},
 
 			handleRequestSent: function () {
