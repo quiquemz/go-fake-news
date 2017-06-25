@@ -6,47 +6,80 @@
 		<style>
 			.card {
 				margin: 54px;
-				padding: 54px 0 0;
+				padding: 24px 0 0;
 				color: #757575;
 				border-radius: 5px;
-				background-color: #E53D3D;
-				box-shadow: 0 0 20px rgba(0, 0, 0, 0.2)
+				box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+			}
+
+			.card#fake-card {
+				background-color: var(--app-accent-color-on-light);
+			}
+
+			.card#real-card {
+				background-color: var(--app-accent-color-on-dark);
 			}
 
 			.circle {
 				display: inline-block;
-				width: 64px;
-				height: 64px;
+				width: 75px;
+				height: 75px;
 				text-align: center;
-				color: #E53D3D;
 				border-radius: 50%;
 				background: white;
-				font-size: 30px;
-				line-height: 64px;
+				font-size: 51px;
+				font-weight: 400;
+				line-height: 76px;
+			}
+
+			.circle#fake-circle {
+				color: var(--app-accent-color-on-light);
+			}
+
+			.circle#real-circle {
+				color: var(--app-accent-color-on-dark);
 			}
 
 			.inner-card {
 				background-color: white;
-				margin-top: 54px;
+				margin-top: 24px;
 				text-align: justify;
 				padding: 50px;
 			}
 
 		</style>
 
-			<div class="card">
-				<div class="circle">X</div>
+
+		<template is="dom-if" if="[[credibility]]">
+			<div id="real-card" class="card">
+				<div id="real-circle" class="circle">&#10003;</div>
 				<div class="inner-card">
-					<h4>Ooops!</h4>
-					<br>
-					It seems lilke this news site is not reliable.
+					<h2 style="font-weight: 200; text-align: center">Great news!</h2>
+					<h2 style="font-weight: 200; text-align: center">Looks like your article seems legit.</h2>
 				</div>
 			</div>
+		</template>
+
+		<template is="dom-if" if="[[!credibility]]">
+			<div id="fake-card" class="card">
+				<div id="fake-circle" class="circle">!</div>
+				<div class="inner-card">
+					<h2 style="font-weight: 200; text-align: center">It seems like this news site is not reliable.</h2>
+				</div>
+			</div>
+		</template>
+
 	</template>
 
 	<script>
 		Polymer({
-			is: 'my-cred-dash'
+			is: 'my-cred-dash',
+
+			properties: {
+				credibility: {
+					type: Boolean
+				}
+			}
 		});
 	</script>
 </dom-module>

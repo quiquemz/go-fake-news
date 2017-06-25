@@ -62,7 +62,7 @@
 		</style>
 
 		<div id="first" class="container">
-			<paper-input id="input" label="Enter fake news url">
+			<paper-input id="input" label="Enter url here">
 				<div slot="suffix">
 					<paper-button id="checkBtn" on-tap="handleCheck">Check</paper-button>
 				</div>
@@ -77,14 +77,13 @@
 			</paper-tabs>
 
 			<iron-pages selected="{{selected}}">
-				<my-cred-dash></my-cred-dash>
+				<my-cred-dash credibility="[[credibility]]"></my-cred-dash>
 				<chart-radar id="radarChart" data="[[data]]"></chart-radar>
 				<div>Zot</div>
 			</iron-pages>
 
 
 		</div>
-
 
 		<iron-ajax
 				id="ajax"
@@ -109,7 +108,7 @@
 				},
 				dataOption: {
 					type: String,
-					value: "Credibility"
+					value: "credibility"
 				},
 				data: {
 					type: Object,
@@ -127,6 +126,9 @@
 							data: [50, 50, 50, 50, 50]
 						}]
 					}
+				},
+				credibility: {
+					type: Boolean
 				}
 			},
 
@@ -138,6 +140,7 @@
 
 			handleCheck: function () {
 				this.$.ajax.generateRequest();
+				//this.handleResponseReceived(); //TODO REMOOVEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			},
 
 			handleRequestSent: function () {
@@ -153,14 +156,14 @@
 				//handle response
 					//0. change second-container display
 					//1. scroll down
-					//2. setTimeout
-					//3. Set credibility page
-					//4. update data.datasets[0].data
-					//5. Set keywords graph
-					//6. click on credibility tab
+					//2. Set credibility boolean
+					//3. update data.datasets[0].data
+					//4. Set keywords graph
+					//5. click on credibility tab
 
 				this.$.second.style.display = "block";
 				smoothScroll(this.$.second, 400);
+				this.credibility = true;
 				this.data.datasets[0].data = [100, 59, 80, 81, 56];
 				this.$.credibility.click();
 
