@@ -210,7 +210,7 @@ def infer(url):
 		labelPrediction = 1
 	else:
 		labelPrediction = 0
-	print("Label predictions: ",labelPrediction)
+	print("Label prediction s: ",labelPrediction)
 
 	return sketchy_score, labelPrediction
 
