@@ -17,8 +17,7 @@ data = {'emotion': {'document': {'emotion': {'anger': 0.106514, 'joy': 0.624548,
 'http://www.dailymail.co.uk/news/article-2958242/Brazilian-former-porn-star-Diane-DeJesus-mystery-figure-5million-year-YouTube-sensation-DC-Toys-Collector.html'}
 
 
-# jdata = json.load(data)
-# pprint(data)
+print(data)
 print("newLine")
 print("newLine")
 print("newLine")
@@ -26,23 +25,29 @@ print("newLine")
 
 # pprint(data['emotion']['document']['emotion'])
 
+
 def get_emotion(str):
     return data['emotion']['document']['emotion'][str]
+
+
 def get_sentiment(val = False):
     if not val:
         return data['sentiment']['document']['label']
     else:
         return data['sentiment']['document']['score']
-def get_enities():
-    numberOfEntities = len(data['entities'])
+
+
+def get_entities():
+    number_of_entities = len(data['entities'])
     i = 0
-    stringToAddToCSV = ""
-    while i < numberOfEntities:
-        stringToAddToCSV = data['entities'][numberOfEntities]['text']
+    string_to_add_to_csv = ""
+    while i < number_of_entities:
+        print(i)
+        string_to_add_to_csv = "%s %s" % (string_to_add_to_csv, data['entities'][i]['text'])
         i += 1
-    return stringToAddToCSV
+    return string_to_add_to_csv
 
 
-pprint(get_enities())
+# pprint(get_entities())
 # print(get_emotion('anger'))
 # print(get_sentiment())
