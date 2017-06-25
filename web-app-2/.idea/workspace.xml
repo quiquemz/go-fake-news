@@ -56,11 +56,11 @@
       <file leaf-file-name="my-search-url.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/my-search-url.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="211">
-              <caret line="157" column="0" selection-start-line="157" selection-start-column="0" selection-end-line="157" selection-end-column="0" />
+            <state relative-caret-position="255">
+              <caret line="90" column="30" selection-start-line="90" selection-start-column="30" selection-end-line="90" selection-end-column="30" />
               <folding>
-                <element signature="e#4453#5620#0" expanded="false" />
-                <element signature="e#4804#4867#0" expanded="false" />
+                <element signature="e#4450#5617#0" expanded="false" />
+                <element signature="e#4801#4864#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -269,12 +269,12 @@
       <option name="presentableId" value="Default" />
       <updated>1498369170276</updated>
       <workItem from="1498369173211" duration="982000" />
-      <workItem from="1498371704372" duration="12451000" />
+      <workItem from="1498371704372" duration="12777000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="13433000" />
+    <option name="totallyTimeSpent" value="13759000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1280" height="773" extended-state="6" />
@@ -372,8 +372,8 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#4453#5620#0" expanded="false" />
-            <element signature="e#4804#4867#0" expanded="false" />
+            <element signature="e#4450#5617#0" expanded="false" />
+            <element signature="e#4801#4864#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -447,11 +447,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/my-search-url.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="157" column="0" selection-start-line="157" selection-start-column="0" selection-end-line="157" selection-end-column="0" />
+        <state relative-caret-position="255">
+          <caret line="90" column="30" selection-start-line="90" selection-start-column="30" selection-end-line="90" selection-end-column="30" />
           <folding>
-            <element signature="e#4453#5620#0" expanded="false" />
-            <element signature="e#4804#4867#0" expanded="false" />
+            <element signature="e#4450#5617#0" expanded="false" />
+            <element signature="e#4801#4864#0" expanded="false" />
           </folding>
         </state>
       </provider>

@@ -88,7 +88,7 @@
 
 		<iron-ajax
 				id="ajax"
-				url="localhost:5000"
+				url="127.0.0.1:5000"
 				params='{"url":"http://www.foxnews.com/politics/2017/06/25/price-backs-senate-health-care-bill-admits-getting-votes-will-be-tough.html"}'
 				handle-as="json"
 				on-error="handleError"
@@ -130,7 +130,7 @@
 			},
 
 			ready: function() {
-				this.$.ajax.addEventListener('error', this.handleYTError.bind(this));
+				this.$.ajax.addEventListener('error', this.handleError.bind(this));
 				this.$.ajax.addEventListener('request', this.handleRequestSent.bind(this));
 				this.$.ajax.addEventListener('response', this.handleResponseReceived.bind(this));
 			},
@@ -164,7 +164,7 @@
 			},
 
 			handleError: function(event) {
-				this.$.addButton.disabled = false;
+				this.$.checkBtn.disabled = false;
 				var error = event.detail.error;
 				alert(error);
 			}
