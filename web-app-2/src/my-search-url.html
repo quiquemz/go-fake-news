@@ -4,6 +4,7 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/chart-elements/chart-radar.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="my-cred-dash.html">
 
 <dom-module id="my-search-url">
@@ -61,9 +62,9 @@
 		</style>
 
 		<div id="first" class="container">
-			<paper-input label="Enter fake news url">
+			<paper-input id="input" label="Enter fake news url">
 				<div slot="suffix">
-					<paper-button on-tap="handleCheck">Check</paper-button>
+					<paper-button id="checkBtn" on-tap="handleCheck">Check</paper-button>
 				</div>
 			</paper-input>
 		</div>
@@ -83,6 +84,17 @@
 
 
 		</div>
+
+
+		<iron-ajax
+				id="ajax"
+				url="localhost:5000"
+				params='{"url":"http://www.foxnews.com/politics/2017/06/25/price-backs-senate-health-care-bill-admits-getting-votes-will-be-tough.html"}'
+				handle-as="json"
+				on-error="handleError"
+				debounce-duration="300">
+		</iron-ajax>
+
 	</template>
 
 	<script>
@@ -117,8 +129,23 @@
 				}
 			},
 
-			handleCheck: function () {
+			ready: function() {
+				this.$.ajax.addEventListener('error', this.handleYTError.bind(this));
+				this.$.ajax.addEventListener('request', this.handleRequestSent.bind(this));
+				this.$.ajax.addEventListener('response', this.handleResponseReceived.bind(this));
+			},
 
+			handleCheck: function () {
+				this.$.ajax.generateRequest();
+			},
+
+			handleRequestSent: function () {
+				this.$.checkBtn.disabled=true;
+			},
+
+			handleResponseReceived: function (response) {
+				this.$.checkBtn.disabled=false;
+				this.$.input.value = null;
 				//handle request
 				//handle response
 					//0. change second-container display
@@ -132,9 +159,16 @@
 				this.$.second.style.display = "block";
 				smoothScroll(this.$.second, 400);
 				this.data.datasets[0].data = [100, 59, 80, 81, 56];
-				this.$.radarChart.style.width = "499px";
 				this.$.credibility.click();
+
+			},
+
+			handleError: function(event) {
+				this.$.addButton.disabled = false;
+				var error = event.detail.error;
+				alert(error);
 			}
+
 		});
 
 		// Function to animate the scroll
