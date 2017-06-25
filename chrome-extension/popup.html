@@ -4,21 +4,31 @@
  "browser_action" field in manifest.json contains the "default_popup" key with
  value "popup.html".
  -->
-<html>
+<!-- <html>
   <head>
     <title>Getting Started Extension's Popup</title>
     <link rel="stylesheet" href="customStyles.css">
 
-    <!--
+    
       - JavaScript and HTML must be in separate files: see our Content Security
       - Policy documentation[1] for details and explanation.
       -
       - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
-     -->
+     
     <script src="js/popup.js"></script>
   </head>
   <body>
     <p>Hello World!</p>
+  </body>
+</html> -->
+<html>
+  <head>
+    <title>GoFakeNews</title>
+    <script src="popup.js"></script>
+  </head>
+  <body>
+    <h1>GoFakeNews</h1>
+    <button id="checkPage">Check this page now!</button>
   </body>
 </html>
 

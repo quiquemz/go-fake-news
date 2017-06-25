@@ -6,9 +6,10 @@
   "version": "1.0",
 
   "browser_action": {
-    "default_icon": "images/icon.png",
+    // "default_icon": "images/icon.png",
+    "default_icon": "images/wow.png",
     "default_popup": "popup.html",
-    "default_title": "Click here!"
+    "default_title": "Is this Fake news?"
   },
 
   "permissions": [
