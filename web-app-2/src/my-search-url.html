@@ -88,10 +88,11 @@
 
 		<iron-ajax
 				id="ajax"
-				url="127.0.0.1:5000"
+				url="http://localhost:5000"
 				params='{"url":"http://www.foxnews.com/politics/2017/06/25/price-backs-senate-health-care-bill-admits-getting-votes-will-be-tough.html"}'
 				handle-as="json"
 				on-error="handleError"
+				method="GET"
 				debounce-duration="300">
 		</iron-ajax>
 
@@ -141,9 +142,11 @@
 
 			handleRequestSent: function () {
 				this.$.checkBtn.disabled=true;
+				console.log("Request Sent");
 			},
 
 			handleResponseReceived: function (response) {
+			    console.log("Response Received");
 				this.$.checkBtn.disabled=false;
 				this.$.input.value = null;
 				//handle request
