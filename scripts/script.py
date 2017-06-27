@@ -220,9 +220,10 @@ def main():
 	infer(input_url)
 
 if __name__ == "__main__":
-	main()
+	# main()
 	# infer("http://www.theonion.com/article/scientists-confident-artificially-intelligent-mach-51170")
 
 # infer("http://www.theonion.com/graphic/sean-spicer-cradling-comfort-pig-throughout-briefi-56317")
-	# learn("dataset/data.csv")
+	learn("dataset/data.csv")
+	# learn("dataset/politifact.csv")
 	# learn("dataset/yo7.csv")
