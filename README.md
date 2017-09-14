@@ -25,6 +25,7 @@ pip3 install bs4
 pip3 install keras
 pip3 install tensorflow
 pip3 install h5py
+pip3 install newspaper3k
 ```
 There may be more. Just pip3 install like above.
 
@@ -32,7 +33,7 @@ There may be more. Just pip3 install like above.
 Change the directory to web-apps-2, then Start the polymer instance: 
 ```
 cd web-apps-2
-polymer serve --open"
+polymer serve --open
 ```
 
 In a separate window, Start the Flask backend: `python3 server.py`
