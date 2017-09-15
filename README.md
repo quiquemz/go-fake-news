@@ -14,28 +14,19 @@ Install [Flask](http://flask.pocoo.org/docs/0.12/installation/)
 
 Install Polymer: `npm install -g polymer-cli`
 
-Install modules: 
+Install modules (python3 & pip3 as default):
 ```
-pip3 install --upgrade watson-developer-cloud
-pip3 install pandas
-pip3 install nltk
-pip3 install sklearn
-pip3 install scipy
-pip3 install bs4
-pip3 install keras
-pip3 install tensorflow
-pip3 install h5py
-pip3 install newspaper3k
+pip install -r requirements.txt
 ```
 There may be more. Just pip3 install like above.
 
 ### Run dependencies
 Change the directory to web-apps-2, then Start the polymer instance: 
 ```
-cd web-apps-2
+cd web-app-2
 polymer serve --open
 ```
 
-In a separate window, Start the Flask backend: `python3 server.py`
+In a separate window, Start the Flask backend: `python server.py`
 
 * if you use virtualenv, make sure you `. venv/bin/activate` in the new window
