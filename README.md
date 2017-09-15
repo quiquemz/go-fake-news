@@ -16,7 +16,7 @@ Install Polymer: `npm install -g polymer-cli`
 
 Install modules (python3 & pip3 as default):
 ```
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 There may be more. Just pip3 install like above.
 
