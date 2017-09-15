@@ -1,0 +1,10 @@
+watson-developer-cloud
+pandas
+nltk
+sklearn
+scipy
+bs4
+keras
+tensorflow
+h5py
+newspaper3k
